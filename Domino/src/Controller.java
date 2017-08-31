@@ -10,76 +10,136 @@ public class Controller
 
     public static void takeTurn(Game game, Player currentPlayer)
     {
+        int chosen = chooseDom(currentPlayer);
+        while (chosen == -1){
+            chosen = chooseDom(currentPlayer);
+        }
+        Domino chosenOne = currentPlayer.getHand().get(chosen);
+        currentPlayer.removeDom(chosen);
+        System.out.println("You chose: " + chosenOne.toString());
+        int row = getRow();
+        while (row == -1)
+        {
+            row = getRow();
+        }
+        System.out.println("You chose row number: " + row);
+
+        int flipped = shouldFlip(chosenOne);
+        while (flipped == -1)
+        {
+            flipped = shouldFlip(chosenOne);
+        }
+
+        int side = whichSide();
+        while (side == -1 ){
+            side = whichSide();
+        }
+
+        game.placeDomino(chosenOne, row, side);
+
+        System.out.println("\n\n\n\n");
+        System.out.println("board after move: ");
+        game.printBoard();
+
+    }
+
+    public static int chooseDom(Player currentPlayer) {
         Scanner reader = new Scanner(System.in);
         System.out.println("Pick from your hand " + currentPlayer.getName() + ":");
         currentPlayer.printHand();
-        int n = -1;
+        int result = -1;
+
         try {
-            n = reader.nextInt();
-        } catch (InputMismatchException ex){
-            System.out.println("Invalid number.");
-        }
-
-        if (n > currentPlayer.getHand().size() || n < 0)
-        {
-            System.out.println("Sorry not a valid dominooo.");
-        } else
-        {
-            Domino chosenOne = currentPlayer.getHand().get(n);
-            currentPlayer.removeDom(n);
-            System.out.println("You chose: " + chosenOne.toString());
-            System.out.println("Which row do you want to play at? (1 or 2)");
-            int row = -1;
-            try {
-                row = reader.nextInt();
-            } catch (InputMismatchException ex){
-                System.out.println("Invalid row input.");
+            int num = reader.nextInt();
+            if (num > currentPlayer.getHand().size() || num < 0)
+            {
+                System.out.println("Sorry not a valid dominooo.");
+            } else {
+                result = num;
             }
+        } catch (InputMismatchException ex){
+            System.out.println("Invalid domino chosen. ");
+        }
+        return result;
+    }
 
+    public static int getRow()
+    {
+        System.out.println("Which row do you want to play at? (1 or 2)");
+        Scanner reader = new Scanner(System.in);
+        int row = -1;
+        try
+        {
+            row = reader.nextInt();
             if (row != 1 && row != 2)
             {
-                System.out.println("Sorry not a row. ");
+                System.out.println("Sorry not a row num.");
+                row = -1;
+            }
+
+        } catch (InputMismatchException ex)
+        {
+            System.out.println("Invalid row input.");
+        }
+
+
+        return row;
+    }
+
+    public static int shouldFlip(Domino dom)
+    {
+        System.out.println("Would you like to flip the domino?  ");
+        System.out.println("y/n ?");
+        int status = -1;
+        Scanner reader = new Scanner(System.in);
+        char answer;
+        try
+        {
+            answer = reader.next().charAt(0);
+            if (answer != 'y' && answer != 'n')
+            {
+                System.out.println("Sorry invalid answer number.");
             } else
             {
-                System.out.println("You chose row number: " + row);
-                System.out.println("Would you like to flip the domino?  ");
-                System.out.println("y/n ?");
-                char answer = reader.next().charAt(0);
-
-                if (answer != 'y' && answer != 'n')
+                if (answer == 'y')
                 {
-                    System.out.println("Sorry invalid answer");
-                } else
-                {
-                    if (answer == 'y')
-                    {
-                        System.out.println("dom before flip: " + chosenOne.toString());
-                        chosenOne.flip();
-                        System.out.println("dom after flip: " + chosenOne.toString());
-                    }
-                    System.out.println("Which side would you like to place on? (l/r)");
-                    char side = reader.next().charAt(0);
-                    if (side != 'r' && side != 'l')
-                    {
-                        System.out.println("Error not a proper side");
-                    } else
-                    {
-                        if (side == 'r')
-                        {
-                            game.placeDomino(chosenOne, row, 0);
-                        } else
-                        {
-                            game.placeDomino(chosenOne, row, 1);
-                        }
-                    }
+                    dom.flip();
+                }
+                status = 1;
+            }
+        } catch (InputMismatchException ex)
+        {
+            System.out.println("Sorry not a valid answer.");
+        }
+        return status;
+    }
 
-                    System.out.println("\n\n\n\n");
-                    System.out.println("board after move: ");
-                    game.printBoard();
+    public static int whichSide(){
+
+        Scanner reader = new Scanner(System.in);
+        System.out.println("Which side would you like to place on? (l/r)");
+
+        int result = -1;
+        try {
+            char side = reader.next().charAt(0);
+            if (side != 'l' && side != 'r') {
+                System.out.println("Sorry not a valid size char. ");
+            } else {
+                if (side == 'l') {
+                    result = 1;
+                } else {
+                    result = 0;
                 }
             }
+
+        } catch (InputMismatchException ex){
+            System.out.println("Sorry not a valid side.");
         }
+
+        return result;
     }
+
+
 
 
     public static void main(String[] args)
