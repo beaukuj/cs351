@@ -8,9 +8,8 @@ public class Player
     private String name;
     private ArrayList<Domino> hand = new ArrayList<Domino>();
 
-    public Player(String name, ArrayList<Domino> hand1) {
+    public Player(String name) {
         this.name = name;
-        this.hand = hand1;
     }
 
     public String getName()
@@ -26,9 +25,19 @@ public class Player
         for (int i = 0; i < hand.size(); i ++){
             System.out.println("(" + i + "): " + hand.get(i).toString());
         }
+        System.out.println("(" + hand.size() + "):" + " Pick from boneyard");
+    }
+
+    public void setHand(ArrayList<Domino> hand)
+    {
+        this.hand = hand;
     }
 
     public void removeDom(int index){
         hand.remove(index);
     }
+    public void addDom(Domino dom){
+        hand.add(dom);
+    }
+
 }

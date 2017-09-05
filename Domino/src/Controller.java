@@ -14,9 +14,20 @@ public class Controller
         while (chosen == -1){
             chosen = chooseDom(currentPlayer);
         }
-        Domino chosenOne = currentPlayer.getHand().get(chosen);
-        currentPlayer.removeDom(chosen);
-        System.out.println("You chose: " + chosenOne.toString());
+        Domino chosenOne;
+        if (chosen == currentPlayer.getHand().size()){
+            System.out.println("picking from boneyard");
+            chosenOne = game.drawFromYard();
+            currentPlayer.addDom(chosenOne);
+            System.out.println("You chose: " + chosenOne.toString());
+            currentPlayer.printHand();
+        } else {
+            chosenOne = currentPlayer.getHand().get(chosen);
+            currentPlayer.removeDom(chosen);
+            System.out.println("You chose: " + chosenOne.toString());
+        }
+
+
         int row = getRow();
         while (row == -1)
         {
@@ -40,7 +51,7 @@ public class Controller
         System.out.println("\n\n\n\n");
         System.out.println("board after move: ");
         game.printBoard();
-
+        game.switchPlayer();
     }
 
     public static int chooseDom(Player currentPlayer) {
@@ -82,7 +93,6 @@ public class Controller
             System.out.println("Invalid row input.");
         }
 
-
         return row;
     }
 
@@ -104,6 +114,7 @@ public class Controller
                 if (answer == 'y')
                 {
                     dom.flip();
+                    System.out.println("Domino is now: " + dom.toString());
                 }
                 status = 1;
             }
@@ -144,11 +155,11 @@ public class Controller
 
     public static void main(String[] args)
     {
-
-        Game game = new Game();
+        Player firstPlayer = new Player("first_guy");
+        Player secondPlayer = new Player("second_guy");
+        Game game = new Game(firstPlayer, secondPlayer);
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
-        Player currentPlayer = player1;
 
         System.out.println("Game has started");
         System.out.println("Player 1 name: " + player1.getName());
@@ -157,15 +168,7 @@ public class Controller
 
         while (game.isOver() == false)
         {
-            takeTurn(game, currentPlayer);
-            if (currentPlayer == player1)
-            {
-                currentPlayer = player2;
-            } else
-            {
-                currentPlayer = player1;
-            }
-
+            takeTurn(game, game.getCurrent());
         }
 
     }
